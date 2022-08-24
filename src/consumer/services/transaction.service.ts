@@ -64,6 +64,7 @@ const transactionService = {
       `INSERT INTO ${TRANSACTION_TABLE_NAME} (
             id,
             bankAccountId,
+            title,
             description,
             category,
             status,
@@ -78,6 +79,7 @@ const transactionService = {
           ) VALUES (
             :id,
             :bankAccountId,
+            :title,
             :description,
             :category,
             :status,
