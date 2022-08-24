@@ -28,7 +28,6 @@ const transactionService = {
     id: string,
     { db }: { db: Database },
   ): Promise<ITransaction | undefined> {
-    console.log('find one by id');
     return db.get<ITransaction>(
       `SELECT * FROM ${TRANSACTION_TABLE_NAME} WHERE id = :id;`,
       {
