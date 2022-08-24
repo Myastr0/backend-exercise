@@ -12,8 +12,15 @@ const bankAccountService = {
    * @returns {Promise<*>}
    */
   updateBalanceValueById(id: string, value: number, { db }: { db: Database }) {
+    let sign;
+    if (value < 0) {
+      sign = '-';
+    } else {
+      sign = '+';
+    }
+
     return db.run(
-      `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET balance += :balance WHERE id = :id`,
+      `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET balance = balance ${sign} :balance WHERE id = :id`,
       { balance: value, id },
     );
   },
@@ -31,8 +38,15 @@ const bankAccountService = {
     value: number,
     { db }: { db: Database },
   ) {
+    let sign;
+    if (value < 0) {
+      sign = '-';
+    } else {
+      sign = '+';
+    }
+
     return db.run(
-      `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET nextBalance += :nextBalance WHERE id = :id`,
+      `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET nextBalance = nextBalance ${sign} :nextBalance WHERE id = :id`,
       { nextBalance: value, id },
     );
   },
