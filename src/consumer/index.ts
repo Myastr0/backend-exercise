@@ -20,6 +20,7 @@ import {
   E_EVENT_INVALID_SCHEMA,
   E_EVENT_MAX_RETRIES_EXCEEDED,
 } from './errors/event.errors';
+import bankAccountService from './services/bankAccount.service';
 
 /**
  * A handler that will receive transaction events
@@ -45,7 +46,6 @@ const handle = async (event: Event) => {
     logger.info('Event valid', { eventId: event.eventId });
 
     // Start transaction
-
     const transactionInfo: ITransaction = {
       id: event.payload.transactionId,
       bankAccountId: event.payload.bankAccountId,
@@ -65,9 +65,13 @@ const handle = async (event: Event) => {
       transactionAt: new Date(event.payload.transactionAt),
     };
 
-    console.log({ transactionInfo });
-    await db.run('BEGIN');
+    await bankAccountService.createBankAccountIfNotExists(
+      event.payload.bankAccountId,
+      event.payload.userId,
+      { db },
+    );
 
+    await db.run('BEGIN');
     try {
       switch (transactionInfo.status) {
         case TRANSACTION_STATUS_ENUM.PENDING:
