@@ -1,10 +1,7 @@
 import logger from '../utils/logger';
-
-interface Event {
-  eventId: string;
-  payload: any;
-  retry: number;
-}
+import { Event, IEventPayload } from './event.interfaces';
+import eventValidator from './event.validator';
+import getDatabase from '../utils/database';
 
 /**
  * A handler that will receive transaction events
@@ -16,10 +13,32 @@ interface Event {
  * @returns {boolean} false if the event needs to be retried, else true
  */
 const handle = async (event: Event) => {
+  const db = await getDatabase();
+
   try {
     logger.info('Event received', { event });
 
+    try {
+      eventValidator(event);
+    } catch (err) {
+      logger.error(err);
+      throw err;
+    }
+
+    logger.info('Event valid', { eventId: event.eventId });
+
+    // Start transaction
+
+    // Considérer le user et le bankAccount existent avec un solde à 0.
+    //
+
+    // End transaction
+
+    //
     // TODO insert your code here
+    // 1. Add validator for event.payload
+    // 2. Store data in transactions table
+    // 3.
 
     return true;
   } catch (err) {

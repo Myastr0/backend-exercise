@@ -22,6 +22,8 @@
     "type-check": "yarn tsc --noEmit"
   },
   "dependencies": {
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
     "chance": "^1.1.7",
     "queue": "^6.0.2",
     "sqlite": "^4.0.23",

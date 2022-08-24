@@ -119,3 +119,6 @@ dist
 
 # SQLite db
 *.db
+
+# IntelliJ
+.idea
