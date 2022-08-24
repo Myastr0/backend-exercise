@@ -62,6 +62,7 @@ const transactionService = {
     // 2. Insert transaction in database
     const result = await db.run(
       `INSERT INTO ${TRANSACTION_TABLE_NAME} (
+            id,
             bankAccountId,
             description,
             category,
@@ -75,6 +76,7 @@ const transactionService = {
             executedAt,
             value
           ) VALUES (
+            :id,
             :bankAccountId,
             :description,
             :category,
@@ -89,7 +91,9 @@ const transactionService = {
             :value);
         `,
       {
+        ':id': insertTransactionDTO.id,
         ':bankAccountId': insertTransactionDTO.bankAccountId,
+        ':title': insertTransactionDTO.title,
         ':description': insertTransactionDTO.description,
         ':category': insertTransactionDTO.category,
         ':status': insertTransactionDTO.status,
@@ -107,16 +111,10 @@ const transactionService = {
       throw new Error('Fail insert');
     }
 
-    /**
-     * TODO: Quick trick to change number type to string type because our primary keys are uuid based
-     * TODO: Setup sqlite to use string type for lastID result type
-     */
-    const trxId: string = result.lastID as unknown as string;
-
-    trx = await transactionService.findOneById(trxId, { db });
+    trx = await transactionService.findOneById(insertTransactionDTO.id, { db });
 
     if (trx === undefined) {
-      throw E_TRANSACTION_NOT_FOUND({ transactionId: trxId });
+      throw E_TRANSACTION_NOT_FOUND({ transactionId: insertTransactionDTO.id });
     }
 
     // 3. Update nextBalance value
