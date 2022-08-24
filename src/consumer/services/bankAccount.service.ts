@@ -21,7 +21,7 @@ const bankAccountService = {
 
     return db.run(
       `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET balance = balance ${sign} :balance WHERE id = :id`,
-      { balance: value, id },
+      { ':balance': value, ':id': id },
     );
   },
 
@@ -47,7 +47,7 @@ const bankAccountService = {
 
     return db.run(
       `UPDATE ${BANK_ACCOUNTS_TABLE_NAME} SET nextBalance = nextBalance ${sign} :nextBalance WHERE id = :id`,
-      { nextBalance: value, id },
+      { ':nextBalance': value, ':id': id },
     );
   },
 };

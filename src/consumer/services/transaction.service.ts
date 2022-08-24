@@ -118,12 +118,16 @@ const transactionService = {
       throw E_TRANSACTION_NOT_FOUND({ transactionId: insertTransactionDTO.id });
     }
 
+    console.log('before update next balance value');
+
     // 3. Update nextBalance value
     await bankAccountService.updateNextBalanceValueById(
       trx.bankAccountId,
       trx.type === TRANSACTION_TYPE_ENUM.PAYIN ? trx.value : -trx.value,
       { db },
     );
+
+    console.log('after update next balance value');
 
     return trx;
   },
@@ -197,8 +201,6 @@ const transactionService = {
         { db },
       );
     }
-    // TODO: Update balance value
-    // TODO: Update nextBalance value
 
     return trx;
   },
