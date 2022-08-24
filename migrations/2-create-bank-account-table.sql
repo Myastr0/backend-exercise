@@ -3,11 +3,13 @@
 --------------------------------------------------------------------------------
 create table bankAccounts
 (
-    id     string not null
+    id          string  not null
         constraint bankAccounts_pk
             primary key,
-    userId string
-        references users
+    userId      string
+        references users,
+    balance     INTEGER not null,
+    nextBalance INTEGER not null
 );
 
 create unique index bankAccounts_id_uindex
