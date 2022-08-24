@@ -118,16 +118,12 @@ const transactionService = {
       throw E_TRANSACTION_NOT_FOUND({ transactionId: insertTransactionDTO.id });
     }
 
-    console.log('before update next balance value');
-
     // 3. Update nextBalance value
     await bankAccountService.updateNextBalanceValueById(
       trx.bankAccountId,
       trx.type === TRANSACTION_TYPE_ENUM.PAYIN ? trx.value : -trx.value,
       { db },
     );
-
-    console.log('after update next balance value');
 
     return trx;
   },
@@ -150,18 +146,21 @@ const transactionService = {
     executedAt: Date | null,
     { db }: { db: Database },
   ): Promise<ITransaction> {
+    // 1. Check if transactionInfo is in VALIDATED state but does not have execution time
     if (status === TRANSACTION_STATUS_ENUM.VALIDATED && executedAt === null) {
       throw E_TRANSACTION_EXECUTED_AT_SHOULD_BE_DEFINED({
         transactionId: id,
       });
     }
 
+    // 2. Check if related transaction exists
     let trx = await transactionService.findOneById(id, { db });
 
     if (trx === undefined) {
       throw E_TRANSACTION_NOT_FOUND({ transactionId: id });
     }
 
+    // 3. Check if existing related transaction is not in VALIDATED state
     if (trx.status === TRANSACTION_STATUS_ENUM.VALIDATED) {
       throw E_TRANSACTION_ALREADY_VALIDATED({ transactionId: id });
     }
@@ -186,6 +185,9 @@ const transactionService = {
       throw E_TRANSACTION_NOT_FOUND({ transactionId: id });
     }
 
+    // 4. Update bank account
+    // 4.a Update balance value for VALIDATED transaction
+    // 4.b Update nextBalance value for CANCELED transaction
     if (trx.status === TRANSACTION_STATUS_ENUM.VALIDATED) {
       await bankAccountService.updateBalanceValueById(
         trx.bankAccountId,
